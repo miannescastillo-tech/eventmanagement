@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book an Appointment</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #fdf0ac;
+        }
+
+        .container {
+            width: 380px;
+            margin: 80px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            color: #051650;
+        }
+
+        input, select, textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        input[type="submit"] {
+            background-color: #408ee0;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 95%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #779ecb;
+        }
+
+        .secondary-btn {
+            background-color: #123499;
+            color: white;
+            margin-top: 10px;
+            border: none;
+            padding: 10px;
+            width: 95%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background-color: #555;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-left: 5%;
+            font-size: 13px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Book an Appointment</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+
+    <label><strong>Agency</strong></label>
+    <select name="agency" id="agency" required>
+        <option value="">Select Agency</option>
+        <option value="DFA">DFA</option>
+        <option value="LTO">LTO</option>
+        <option value="NBI">NBI</option>
+        <option value="PNP">PNP</option>
+        <option value="PhilHealth">PhilHealth</option>
+        <option value="SSS">SSS</option>
+        <option value="PRC">PRC</option>
+    </select>
+
+
+    <label><strong>Branch</strong></label>
+    <select name="branch" id="branch" required>
+        <option value="">Select Branch</option>
+    </select>
+
+
+    <label><strong>Service</strong></label>
+    <select name="service" id="service" required>
+        <option value="">Select Service</option>
+    </select>
+
+
+    <label><strong>Date</strong></label>
+    <input type="date" name="appointment_date" required>
+
+
+    <label><strong>Time</strong></label>
+    <input type="time" name="appointment_time" required>
+
+
+    <label><strong>Description</strong></label>
+    <textarea name="description" placeholder="Additional details"></textarea>
+
+    <input type="submit" value="Book Appointment">
+</form>
+
+<a href="{% url 'loginUser' %}">
+    <button type="button" class="secondary-btn">Back</button>
+</a>
+
+</div>
+
+<script>
+// SERVICES
+const services = {
+    "DFA": ["Passport Application", "Passport Renewal"],
+    "LTO": ["Driver's License Application", "Driver's License Renewal", "Student Permit"],
+    "NBI": ["NBI Clearance Application"],
+    "PNP": ["Police Clearance"],
+    "PhilHealth": ["Membership Registration", "ID Processing"],
+    "SSS": ["SSS Number Application", "Loan Application", "ID Processing"],
+    "PRC": ["PRC ID Application", "PRC ID Renewal"]
+};
+
+// BRANCHES (CEBU-BASED)
+const branches = {
+    "DFA": ["SM Seaside Cebu", "Robinsons Galleria Cebu"],
+    "LTO": ["SM City Cebu", "Talisay City", "Mandaue City"],
+    "NBI": ["NBI Cebu City", "Robinsons Galleria Cebu"],
+    "PNP": ["Cebu City Police Office", "Mandaue Police Station"],
+    "PhilHealth": ["Cebu Business Park", "Mandaue Branch"],
+    "SSS": ["SSS Cebu Ayala", "SSS Mandaue"],
+    "PRC": ["PRC Cebu Office"]
+};
+
+const agency = document.getElementById("agency");
+const service = document.getElementById("service");
+const branch = document.getElementById("branch");
+
+agency.addEventListener("change", function () {
+
+    // Reset service + branch
+    service.innerHTML = '<option value="">Select Service</option>';
+    branch.innerHTML = '<option value="">Select Branch</option>';
+
+    // Populate services
+    if (services[this.value]) {
+        services[this.value].forEach(function(item) {
+            let option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            service.appendChild(option);
+        });
+    }
+
+    // Populate branches
+    if (branches[this.value]) {
+        branches[this.value].forEach(function(place) {
+            let option = document.createElement("option");
+            option.value = place;
+            option.textContent = place;
+            branch.appendChild(option);
+        });
+    }
+});
+</script>
+
+</body>
+</html>

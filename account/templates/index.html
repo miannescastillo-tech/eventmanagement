@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+
+<h2>Welcome</h2>
+
+
+<form method="post" action="{% url 'loginUser' %}">
+    {% csrf_token %}
+
+    Username:
+    <input type="text" name="username">
+
+
+
+    Password:
+    <input type="password" name="password">
+
+
+
+    <input type="submit" value="Login">
+</form>
+
+<a href="{% url 'register' %}">
+    <button>Register</button>
+</a>
+
+</body>
+</html>

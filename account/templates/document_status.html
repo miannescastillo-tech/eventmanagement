@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Document Status</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #fdf0ac;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+    margin: 0;
+}
+
+h2 {
+    color: #051650;
+}
+
+.container {
+    width: 500px;
+}
+
+.card {
+    position: relative;
+    background: white;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.status-top {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pending { background: #e74c3c; }
+.processing { background: #f39c12; }
+.releasing { background: #3498db; }
+.completed { background: #27ae60; }
+
+button {
+    margin-top: 10px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #555;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #779ecb;
+}
+
+.back-btn {
+    background-color: #123499;
+    color: white;
+}
+
+.back-btn:hover {
+    background-color: #555;
+}
+
+.status-text {
+    font-size: 12px;
+    color: #777;
+    margin-top: 3px;
+}
+
+.label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.feedback-box {
+    margin-top: 15px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 5px solid #28a745;
+}
+
+.feedback-title {
+    font-weight: bold;
+    color: #051650;
+    margin-bottom: 8px;
+}
+
+.comment {
+    font-style: italic;
+    color: #444;
+    margin-top: 5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>My Document Requests</h2>
+
+{% if documents %}
+    {% for e in documents %}
+    <div class="card">
+
+        <div class="status-top">
+
+            {% if e.status == "Pending" %}
+                <span class="badge pending">Pending</span>
+
+            {% elif e.status == "Processing" %}
+                <span class="badge processing">Processing</span>
+
+            {% elif e.status == "For Releasing" %}
+                <span class="badge releasing">For Releasing</span>
+
+            {% elif e.status == "Completed" %}
+                <span class="badge completed">Completed</span>
+
+            {% endif %}
+
+        </div>
+
+        <strong>{{ e.document_type }}</strong>
+
+        {% if e.status == "Pending" %}
+            <p class="status-text">
+                Waiting for processing
+            </p>
+
+        {% elif e.status == "Processing" %}
+            <p class="status-text">
+                Your request is being processed
+            </p>
+
+        {% elif e.status == "For Releasing" %}
+            <p class="status-text">
+                Ready for pickup
+            </p>
+
+        {% elif e.status == "Completed" %}
+            <p class="status-text">
+                Document has been claimed
+            </p>
+        {% endif %}
+
+        <p style="font-size: 12px; color: gray; margin-top: 2px;">
+
+            Requested:
+            {{ e.created_at|date:"F d, Y - h:i A" }}
+
+            <br>
+
+            Updated:
+            {{ e.updated_at|date:"F d, Y - h:i A" }}
+
+        </p>
+
+        <p class="label">Agency:</p>
+        <p>{{ e.agency }}</p>
+
+        <p class="label">Purpose:</p>
+        <p>{{ e.purpose }}</p>
+
+        {% if e.description %}
+        <p class="label">Additional Details:</p>
+        <p>{{ e.description }}</p>
+        {% endif %}
+
+        {% if e.status == "Completed" %}
+
+            {% if e.survey %}
+
+                <div class="feedback-box">
+
+                    <div class="feedback-title">
+                        Your Feedback
+                    </div>
+
+                    <div>
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= e.survey.rating %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if e.survey.comment %}
+
+                        <div class="comment">
+                            "{{ e.survey.comment }}"
+                        </div>
+
+                    {% else %}
+
+                        <div class="comment">
+                            No comment provided
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'submitSurvey' e.documentID %}">
+                    <button>
+                        Give Feedback
+                    </button>
+                </a>
+
+            {% endif %}
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="id"
+                       value="{{ e.documentID }}">
+
+                <button class="delete-btn">
+                    Delete
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+{% else %}
+
+    <p>No document requests yet.</p>
+
+{% endif %}
+
+<a href="{% url 'loginUser' %}">
+    <button class="back-btn">
+        Back
+    </button>
+</a>
+
+</div>
+
+</body>
+</html>

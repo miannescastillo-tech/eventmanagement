@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Appointments</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #fdf0ac;
+    margin: 0;
+}
+
+.container {
+    width: 500px;
+    margin: 50px auto;
+    position: relative;
+}
+
+h2 {
+    text-align: center;
+    color: #051650;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    margin: 15px 0;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    text-align: left;
+    position: relative;
+}
+
+.card strong {
+    display: block;
+    font-size: 18px;
+    color: #123499;
+    margin-bottom: 3px;
+}
+
+.booked {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #333;
+}
+
+.label {
+    font-weight: bold;
+    color: #051650;
+}
+
+/* STATUS */
+.status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.pending {
+    background-color: #f0ad4e;
+}
+
+.confirmed {
+    background-color: #408ee0;
+}
+
+.completed {
+    background-color: #28a745;
+}
+
+.declined {
+    background-color: #d9534f;
+}
+
+.cancelled {
+    background-color: #6c757d;
+}
+
+/* STATUS TEXT */
+.status-text {
+    font-size: 12px;
+    color: #777;
+    margin-top: 3px;
+    margin-bottom: 12px;
+}
+
+/* FORMS */
+form {
+    margin-top: 10px;
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 13px;
+}
+
+
+.cancel-btn {
+    background-color: #d9534f;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
+}
+
+
+.feedback-btn {
+    margin-top: 10px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: black;
+}
+
+.feedback-btn:hover {
+    background-color: #779ecb;
+}
+
+/* DELETE */
+.delete-btn {
+    background-color: #555;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #333;
+}
+
+/* BACK */
+.back-btn {
+    background-color: #123499;
+    margin-top: 10px;
+}
+
+.back-btn:hover {
+    background-color: #555;
+}
+
+/* FEEDBACK BOX */
+.feedback-box {
+    margin-top: 15px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 5px solid #28a745;
+}
+
+.feedback-title {
+    font-weight: bold;
+    color: #051650;
+    margin-bottom: 8px;
+}
+
+.comment {
+    font-style: italic;
+    color: #444;
+    margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>My Appointments</h2>
+
+{% if appointments %}
+
+    {% for a in appointments %}
+    <div class="card">
+
+        {% if a.status == "Pending" %}
+            <span class="status-badge pending">Pending</span>
+
+        {% elif a.status == "Confirmed" %}
+            <span class="status-badge confirmed">Confirmed</span>
+
+        {% elif a.status == "Completed" %}
+            <span class="status-badge completed">Completed</span>
+
+        {% elif a.status == "Declined" %}
+            <span class="status-badge declined">Declined</span>
+
+        {% elif a.status == "Cancelled" %}
+            <span class="status-badge cancelled">Cancelled</span>
+        {% endif %}
+
+        <strong>{{ a.service }}</strong>
+
+        {% if a.status == "Pending" %}
+            <p class="status-text">
+                Waiting for appointment confirmation
+            </p>
+
+        {% elif a.status == "Confirmed" %}
+            <p class="status-text">
+                Your appointment has been confirmed
+            </p>
+
+        {% elif a.status == "Completed" %}
+            <p class="status-text">
+                Appointment completed successfully
+            </p>
+
+        {% elif a.status == "Declined" %}
+            <p class="status-text">
+                Appointment request was declined
+            </p>
+
+        {% elif a.status == "Cancelled" %}
+            <p class="status-text">
+                Appointment has been cancelled
+            </p>
+        {% endif %}
+
+        <div class="booked">
+
+            Booked:
+            {{ a.created_at|date:"F d, Y - h:i A" }}
+
+            {% if a.updated_at %}
+                <br>
+
+                Updated:
+                {{ a.updated_at|date:"F d, Y - h:i A" }}
+            {% endif %}
+
+        </div>
+
+        <p>
+            <span class="label">Agency:</span>
+            {{ a.agency }}
+        </p>
+
+        {% if a.branch %}
+        <p>
+            <span class="label">Branch:</span>
+            {{ a.branch }}
+        </p>
+        {% endif %}
+
+        <p>
+            <span class="label">Appointment Date:</span>
+            {{ a.appointment_date }}
+        </p>
+
+        <p>
+            <span class="label">Appointment Time:</span>
+            {{ a.appointment_time }}
+        </p>
+
+        {% if a.description %}
+        <p>
+            <span class="label">Description:</span>
+            {{ a.description }}
+        </p>
+        {% endif %}
+
+        {% if a.status == "Pending" %}
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="id"
+                   value="{{ a.appointmentID }}">
+
+            <button class="cancel-btn"
+                    name="action"
+                    value="cancel">
+                Cancel Appointment
+            </button>
+
+        </form>
+        {% endif %}
+
+        {% if a.status == "Completed" %}
+
+            {% if a.appointmentsurvey %}
+
+                <div class="feedback-box">
+
+                    <div class="feedback-title">
+                        Your Feedback
+                    </div>
+
+                    <div>
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= a.appointmentsurvey.rating %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if a.appointmentsurvey.comment %}
+
+                        <div class="comment">
+                            "{{ a.appointmentsurvey.comment }}"
+                        </div>
+
+                    {% else %}
+
+                        <div class="comment">
+                            No comment provided
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'appointmentSurvey' a.appointmentID %}">
+                    <button class="feedback-btn">
+                        Give Feedback
+                    </button>
+                </a>
+
+            {% endif %}
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="id"
+                       value="{{ a.appointmentID }}">
+
+                <button class="delete-btn"
+                        name="action"
+                        value="delete">
+                    Delete
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+{% else %}
+
+    <p>No appointments found.</p>
+
+{% endif %}
+
+<a href="{% url 'loginUser' %}">
+    <button class="back-btn">
+        Back
+    </button>
+</a>
+
+</div>
+
+</body>
+</html>

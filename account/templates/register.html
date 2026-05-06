@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #fdf0ac;
+    margin: 0;
+}
+
+.container {
+    width: 380px;
+    margin: 80px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    text-align: center;
+}
+
+h2 {
+    color: #051650;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+select {
+    width: 95%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="submit"] {
+    background-color: #408ee0;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 95%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #021F9;
+}
+
+.secondary-btn {
+    background-color: #123499;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 95%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.secondary-btn:hover {
+    background-color: #779ecb;
+}
+
+    .date-input {
+    color: #999;
+}
+
+.date-input:focus,
+.date-input:valid {
+    color: #000;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Register</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <input type="text" name="fullName" placeholder="Full Name">
+    <input type="email" name="email" placeholder="Email">
+    <input type="text" name="dob" class="date-input" placeholder="Date of Birth (MM/DD/YYYY)" required>
+    <input type="text" name="address" placeholder="Address">
+    <input type="text" name="phone" placeholder="Phone">
+
+    <select name="type" required>
+        <option value="">Select Account Type</option>
+        <option value="C">Citizen</option>
+        <option value="E">Staff</option>
+    </select>
+
+    <input type="submit" value="Register">
+</form>
+
+
+
+
+<a href="{% url 'loginUser' %}">
+    <button class="secondary-btn">Back to Login</button>
+</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request a Document</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #fdf0ac;
+        }
+
+        .container {
+            width: 380px;
+            margin: 80px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            color: #051650;
+        }
+
+        input, textarea, select {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            background-color: #408ee0;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 95%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #779ecb;
+        }
+
+        .secondary-btn {
+            background-color: #123499;
+            color: white;
+            margin-top: 10px;
+            border: none;
+            padding: 10px;
+            width: 95%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background-color: #555;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-left: 5%;
+            font-size: 13px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Request A Document</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+
+    <label><strong>Agency</strong></label>
+    <select name="agency" id="agency" required>
+        <option value="">Select Agency</option>
+        <option value="PSA">PSA (Philippine Statistics Authority)</option>
+        <option value="NBI">NBI (National Bureau of Investigation)</option>
+        <option value="PNP">PNP (Police Clearance)</option>
+        <option value="Barangay">Barangay Office</option>
+    </select>
+
+
+    <label><strong>Document Type</strong></label>
+    <select name="document_type" id="document_type" required>
+        <option value="">Select Document</option>
+    </select>
+
+
+    <label><strong>Purpose</strong></label>
+    <input type="text" name="purpose" placeholder="e.g. Employment, Travel, School requirement" required>
+
+
+    <label><strong>Description</strong></label>
+    <textarea name="description" placeholder="Additional details (optional)"></textarea>
+
+    <input type="submit" value="Submit Request">
+</form>
+
+<a href="{% url 'loginUser' %}">
+    <button type="button" class="secondary-btn">Back</button>
+</a>
+
+</div>
+
+<script>
+const documents = {
+    "PSA": [
+        "Birth Certificate",
+        "Marriage Certificate",
+        "Death Certificate",
+        "CENOMAR (Certificate of No Marriage)"
+    ],
+    "NBI": [
+        "NBI Clearance"
+    ],
+    "PNP": [
+        "Police Clearance"
+    ],
+    "Barangay": [
+        "Barangay Clearance",
+        "Certificate of Residency"
+    ]
+};
+
+const agencySelect = document.getElementById("agency");
+const documentSelect = document.getElementById("document_type");
+
+agencySelect.addEventListener("change", function () {
+    const selectedAgency = this.value;
+
+    documentSelect.innerHTML = '<option value="">Select Document</option>';
+
+    if (documents[selectedAgency]) {
+        documents[selectedAgency].forEach(function(doc) {
+            const option = document.createElement("option");
+            option.value = doc;
+            option.textContent = doc;
+            documentSelect.appendChild(option);
+        });
+    }
+});
+</script>
+
+</body>
+</html>
